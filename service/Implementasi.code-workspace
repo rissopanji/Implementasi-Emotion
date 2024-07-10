@@ -1,0 +1,32 @@
+{
+	"folders": [
+		{
+			"path": "D:/KULIAH/SEMESTER 8/Skripsi/CODINGAN/TAHAPAN/Implementasi"
+		},
+		{
+			"path": "../utils"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../tweets-data"
+		},
+		{
+			"path": "../saved_model"
+		},
+		{
+			"path": "../node_modules"
+		},
+		{
+			"path": "../config"
+		},
+		{
+			"path": "../crawling"
+		},
+		{
+			"path": "../model"
+		}
+	],
+	"settings": {}
+}

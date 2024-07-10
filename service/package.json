@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@playwright/test": "^1.42.1",
+    "tweet-harvest": "^2.5.3"
+  }
+}
