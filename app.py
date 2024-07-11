@@ -41,7 +41,7 @@ def get_result():
             return jsonify({"error": "Start date and end date must be provided"}), 400
         
         keyword_regex = f".*{keyword}.*"
-        cursor = Tweet.getTweetsByKeyword(keyword=keyword_regex, limit=jumlah_tweet, start_date=start_date, end_date=end_date)
+        # cursor = Tweet.getTweetsByKeyword(keyword=keyword_regex, limit=jumlah_tweet, start_date=start_date, end_date=end_date)
 
         if not cursor or len(cursor) < jumlah_tweet:
             tweet_crawler = TweetCrawler(auth_token=auth_token, search_keyword=keyword, limit=jumlah_tweet, start_date=start_date, end_date=end_date)

@@ -34,6 +34,7 @@ def index():
 
 @app.route('/result', methods=['GET'])
 def get_result():
+    return jsonify(['awkwkx'])
     try:
         keyword = request.args.get('keyword')
         jumlah_tweet = request.args.get('jumlah_tweet', default=5, type=int)
@@ -45,7 +46,7 @@ def get_result():
         
         # search to database
         keyword_regex = f".*{keyword}.*"
-        cursor = Tweet.getTweetsByKeyword(keyword=keyword_regex, limit=jumlah_tweet, start_date=start_date, end_date=end_date)
+        #cursor = Tweet.getTweetsByKeyword(keyword=keyword_regex, limit=jumlah_tweet, start_date=start_date, end_date=end_date)
 
         # If there are no tweets in the database, start crawling
         if not cursor or len(cursor) < jumlah_tweet:

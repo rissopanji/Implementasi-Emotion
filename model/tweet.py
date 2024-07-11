@@ -4,6 +4,7 @@ from pymongo import results
 from datetime import datetime
 from flask import jsonify
 
+
 class Tweet:
     
     def getAllTweets():
