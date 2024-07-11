@@ -1,5 +1,4 @@
 
-from config.db import db
 from bson import ObjectId
 from pymongo import results  
 from datetime import datetime

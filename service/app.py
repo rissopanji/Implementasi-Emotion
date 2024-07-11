@@ -6,7 +6,6 @@ import re
 import requests
 
 from flask import Flask, request, jsonify
-from config.db import db
 from model.tweet import Tweet
 from service.sentiment import Sentiment
 from service.crawler import TweetCrawler

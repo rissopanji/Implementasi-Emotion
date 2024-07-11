@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+import string
 import pandas as pd
 import numpy as np
 import re
@@ -16,18 +16,17 @@ stemmer = MPStemmer()
 # Load the pre-trained emotion analysis model
 model = load_model('./saved_model/model-bilstm.h5')
 
-app = Flask(__name__)
-
-class Emotion:
-    def classify_emotion(data):
+class Sentiment:
+    @staticmethod
+    def classify_sentiment(data):
 
         def lower_case(text):
             return text.lower()
 
         def remove_tweet_special(text):
-            text = text.replace('\\t'," ").replace('\\n'," ").replace('\\u'," ").replace('\\',"")
+            text = text.replace('\\t', " ").replace('\\n', " ").replace('\\u', " ").replace('\\', "")
             text = text.encode('ascii', 'replace').decode('ascii')
-            text = ' '.join(re.sub("([@#][A-Za-z0-9]+)|(\w+:\/\/\S+)"," ", text).split())
+            text = ' '.join(re.sub(r"([@#][A-Za-z0-9]+)|(\w+:\/\/\S+)", " ", text).split())
             return text.replace("http://", " ").replace("https://", " ")
 
         def remove_number(text):
@@ -40,7 +39,7 @@ class Emotion:
             return text.strip()
 
         def remove_whitespace_multiple(text):
-            return re.sub('\s+',' ',text)
+            return re.sub(r'\s+', ' ', text)
 
         def remove_singl_char(text):
             return re.sub(r"\b[a-zA-Z]\b", "", text)
@@ -56,7 +55,7 @@ class Emotion:
 
         for index, row in normalizad_word.iterrows():
             if row[0] not in normalizad_word_dict:
-                normalizad_word_dict[row[0]] = row[1] 
+                normalizad_word_dict[row[0]] = row[1]
 
         def normalized_term(document):
             return [normalizad_word_dict[term] if term in normalizad_word_dict else term for term in document]
@@ -135,7 +134,7 @@ class Emotion:
         return df.to_dict(orient='records')
     
     @staticmethod
-    def calculate_emotion_percentages(data):
+    def calculate_sentiment_percentages(data):
         total = len(data)
         emotion_counts = {'Neutral': 0, 'Anger': 0, 'Joy': 0, 'Love': 0, 'Sad': 0, 'Fear': 0}
 
@@ -146,7 +145,7 @@ class Emotion:
         return percentages
 
     @staticmethod
-    def calculate_emotion_percentages_by_topic(data):
+    def calculate_sentiment_percentages_by_topic(data):
         topics = {}
         for item in data:
             topic = item.get('topic', 'unknown')
@@ -160,24 +159,3 @@ class Emotion:
             percentages_by_topic[topic] = {emotion: (counts[emotion] / counts['total']) * 100 for emotion in counts if emotion != 'total'}
         
         return percentages_by_topic
-
-@app.route('/classify_emotion', methods=['POST'])
-def classify_emotion():
-    data = request.json
-    classified_data = Emotion.classify_emotion(data)
-    return jsonify(classified_data)
-
-@app.route('/emotion_percentages', methods=['POST'])
-def emotion_percentages():
-    data = request.json
-    percentages = Emotion.calculate_emotion_percentages(data)
-    return jsonify(percentages)
-
-@app.route('/emotion_percentages_by_topic', methods=['POST'])
-def emotion_percentages_by_topic():
-    data = request.json
-    percentages_by_topic = Emotion.calculate_emotion_percentages_by_topic(data)
-    return jsonify(percentages_by_topic)
-
-if __name__ == '__main__':
-    app.run(debug=True)
