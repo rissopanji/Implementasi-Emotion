@@ -106,7 +106,7 @@ class Emotion:
 
             print("Text preprocessing done!")
 
-            with open('./utils/tokenizer-cnn-lstm.pickle', 'rb') as handle:
+            with open('./utils/tokenizer-emotion.pickle', 'rb') as handle:
                 tokenizer = pickle.load(handle)
 
             sequences = tokenizer.texts_to_sequences(to_process_df['processed_text'])
