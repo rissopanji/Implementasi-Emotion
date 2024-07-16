@@ -1,5 +1,5 @@
 
-from bson import ObjectId
+from bson.objectid import ObjectId
 from pymongo import results  
 from datetime import datetime
 from flask import jsonify
@@ -46,7 +46,7 @@ class Tweet:
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
-    def updateSentiment(data):
+    def updateEmotion(data):
 
         for item in data:
             # Convert the string representation of ObjectId back to ObjectId

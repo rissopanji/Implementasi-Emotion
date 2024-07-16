@@ -16,9 +16,9 @@ stemmer = MPStemmer()
 # Load the pre-trained emotion analysis model
 model = load_model('./saved_model/model-bilstm.h5')
 
-class Sentiment:
+class Emotion:
     @staticmethod
-    def classify_sentiment(data):
+    def classify_emotion(data):
 
         def lower_case(text):
             return text.lower()
@@ -134,7 +134,7 @@ class Sentiment:
         return df.to_dict(orient='records')
     
     @staticmethod
-    def calculate_sentiment_percentages(data):
+    def calculate_emotion_percentages(data):
         total = len(data)
         emotion_counts = {'Neutral': 0, 'Anger': 0, 'Joy': 0, 'Love': 0, 'Sad': 0, 'Fear': 0}
 
@@ -145,7 +145,7 @@ class Sentiment:
         return percentages
 
     @staticmethod
-    def calculate_sentiment_percentages_by_topic(data):
+    def calculate_emotion_percentages_by_topic(data):
         topics = {}
         for item in data:
             topic = item.get('topic', 'unknown')

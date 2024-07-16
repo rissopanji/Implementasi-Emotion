@@ -7,7 +7,7 @@ import requests
 
 from flask import Flask, request, jsonify
 from model.tweet import Tweet
-from service.sentiment import Sentiment
+from service.emotion import Emotion
 from service.crawler import TweetCrawler
 
 auth_token = os.getenv("AUTH_TOKEN")
@@ -41,7 +41,7 @@ def get_result():
             return jsonify({"error": "Start date and end date must be provided"}), 400
         
         keyword_regex = f".*{keyword}.*"
-        # cursor = Tweet.getTweetsByKeyword(keyword=keyword_regex, limit=jumlah_tweet, start_date=start_date, end_date=end_date)
+        cursor = Tweet.getTweetsByKeyword(keyword=keyword_regex, limit=jumlah_tweet, start_date=start_date, end_date=end_date)
 
         if not cursor or len(cursor) < jumlah_tweet:
             tweet_crawler = TweetCrawler(auth_token=auth_token, search_keyword=keyword, limit=jumlah_tweet, start_date=start_date, end_date=end_date)
@@ -57,9 +57,9 @@ def get_result():
                     tweet_data = row.to_dict()
                     data_crawling.append(tweet_data)
                 
-                sentiment = Sentiment.classify_sentiment(data=data_crawling)
+                emotion = Emotion.classify_emotion(data=data_crawling)
                 Tweet.insertTweets(data_crawling)
-                return jsonify(sentiment), 200
+                return jsonify(emotion), 200
 
             else:
                 return jsonify({"error": "No tweets found"}), 404
@@ -70,15 +70,15 @@ def get_result():
             tweet_data['_id'] = str(tweet['_id'])
             data.append(tweet_data)
 
-        sentiment = Sentiment.classify_sentiment(data=data)
-        Tweet.updateSentiment(sentiment)
-        return jsonify(sentiment), 200
+        emotion = Emotion.classify_emotion(data=data)
+        Tweet.updateEmotion(emotion)
+        return jsonify(emotion), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500     
 
-@app.route('/sentimen-all', methods=['GET'])
-def get_all_sentiment():
+@app.route('/emotion-all', methods=['GET'])
+def get_all_emotion():
     try:
         cursor = Tweet.getAllTweets()
         data = []
@@ -87,9 +87,9 @@ def get_all_sentiment():
             tweet_data['_id'] = str(tweet['_id'])
             data.append(tweet_data)
 
-        sentiment = Sentiment.classify_sentiment(data=data)
-        Tweet.updateSentiment(sentiment)
-        return jsonify(sentiment), 200
+        emotion = Emotion.classify_emotion(data=data)
+        Tweet.updateEmotion(emotion)
+        return jsonify(emotion), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500    
@@ -106,12 +106,12 @@ def fetch_tweets():
     tweet_crawler.harvest_tweets()
     return jsonify({"success" : "crawling data success!"}), 200
 
-@app.route('/sentimen', methods=['GET'])
-def classify_sentiment():
+@app.route('/emotion', methods=['GET'])
+def classify_emotion():
     try:
-        keyword = request.args.get('keyword', 'moist cosrx')
-        num_topics = request.args.get('num_topics', '5')
-        num_tweets = request.args.get('num_tweets', '1000')
+        keyword = request.args.get('keyword')
+        num_topics = request.args.get('num_topics')
+        num_tweets = request.args.get('num_tweets')
         topic_filter = request.args.get('topic')
 
         endpoint = f'http://topic-socialabs.unikomcodelabs.id/topic?keyword={keyword}&num_topics={num_topics}&num_tweets={num_tweets}'
@@ -119,21 +119,21 @@ def classify_sentiment():
         response_data = response.json()
         data = response_data['data']['documents_topic']
 
-        sentiment = Sentiment.classify_sentiment(data=data)
-        sentiment_percentage = Sentiment.calculate_sentiment_percentages(data=sentiment)
-        sentiment_percentage_by_topic = Sentiment.calculate_sentiment_percentages_by_topic(data=sentiment)
+        emotion = Emotion.classify_emotion(data=data)
+        emotion_percentage = Emotion.calculate_emotion_percentages(data=emotion)
+        emotion_percentage_by_topic = Emotion.calculate_emotion_percentages_by_topic(data=emotion)
 
         if topic_filter:
-            filtered_sentiment = [item for item in sentiment if item['topic'] == topic_filter]
+            filtered_emotion = [item for item in emotion if item['topic'] == topic_filter]
             return jsonify({
-                "sentiment": filtered_sentiment,
-                "sentiment_percentage_by_topic": sentiment_percentage_by_topic[topic_filter]
+                "emotion": filtered_emotion,
+                "emotion_percentage_by_topic": emotion_percentage_by_topic[topic_filter]
             }), 200
         else:
             return jsonify({
-                "sentiment": sentiment,
-                "sentiment_percentage": sentiment_percentage,
-                "sentiment_percentage_by_topic": sentiment_percentage_by_topic
+                "emotion": emotion,
+                "emotion_percentage": emotion_percentage,
+                "emotion_percentage_by_topic": emotion_percentage_by_topic
             }), 200
 
     except Exception as e:
