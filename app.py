@@ -19,7 +19,7 @@ def clean_data(data):
         for key, value in doc.items():
             if pd.isna(value):
                 doc[key] = None
-        if 'topic_probability':
+        if 'topic_probability' in doc:
             del doc['topic_probability']
         if '__v' in doc:
             del doc['__v']
@@ -49,7 +49,7 @@ def get_result():
 
             path_to_file = f"./tweets-data/{keyword}.csv"
             if os.path.exists(path_to_file):
-                df = pd.read_csv(path_to_file)
+                df = pd.read_csv(path_to_file, encoding='utf-8')
                 df.replace(np.nan, '', inplace=True, regex=True)
 
                 data_crawling = []
@@ -137,7 +137,9 @@ def classify_emotion():
             }), 200
 
     except Exception as e:
+        print(e)
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True,host="0.0.0.0")
+

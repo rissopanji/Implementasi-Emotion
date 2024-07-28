@@ -159,3 +159,4 @@ class Emotion:
             percentages_by_topic[topic] = {emotion: (counts[emotion] / counts['total']) * 100 for emotion in counts if emotion != 'total'}
         
         return percentages_by_topic
+
