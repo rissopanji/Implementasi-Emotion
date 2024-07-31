@@ -18,8 +18,12 @@ model = load_model('./saved_model/model-bilstm.h5')
 
 class Emotion:
     @staticmethod
+<<<<<<< Updated upstream:service/emotion.py
     def classify_emotion(data):
 
+=======
+    def classify_sentiment(data):
+>>>>>>> Stashed changes:service/sentiment.py
         def lower_case(text):
             return text.lower()
 
